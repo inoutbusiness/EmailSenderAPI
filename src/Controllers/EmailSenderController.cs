@@ -22,7 +22,7 @@ namespace EmailSender.API.Controllers
         {
             try
             {
-                var response = await _emailSenderService.SendEmailAsync(request);
+                var response = await _emailSenderService.SendEmailAsync(request); //
 
                 return Ok(response);
             }
