@@ -12,26 +12,23 @@ namespace EmailSender.API.Services
     public class EmailSenderService : IEmailSenderService
     {
         private readonly IConfiguration _config;
-        private readonly ICodeGeneratorService _codeGeneratorService;
 
-        public EmailSenderService(IConfiguration config, ICodeGeneratorService codeGeneratorService)
+        public EmailSenderService(IConfiguration config)
         {
             _config = config;
-            _codeGeneratorService = codeGeneratorService;
         }
 
         public async Task<EmailSenderResponse> SendEmailAsync(EmailSenderRequest request)
         {
             try
             {
-                var emailCode = _codeGeneratorService.GenerateEmailCode(request.CodeConfig);
-                var emailMessage = BuildEmailMessageWithCode(request, emailCode);
+                var emailMessage = BuildEmailMessageWithCode(request);
                 await SendEmailAsyncBySmtpClient(emailMessage, request);
 
                 return new EmailSenderResponse()
                 {
                     Success = true,
-                    Code = emailCode
+                    Code = request.RecoveryToken
                 };
             }
             catch (EmailSenderException emailSenderEx)
@@ -44,7 +41,7 @@ namespace EmailSender.API.Services
             }
         }
 
-        private MimeMessage BuildEmailMessageWithCode(EmailSenderRequest request, string emailCode)
+        private MimeMessage BuildEmailMessageWithCode(EmailSenderRequest request)
         {
             try
             {
@@ -52,7 +49,7 @@ namespace EmailSender.API.Services
                 email.From.Add(MailboxAddress.Parse(request.EmailFrom));
                 email.To.Add(MailboxAddress.Parse(request.EmailTo));
                 email.Subject = request.Subject;
-                email.Body = new TextPart(TextFormat.Html) { Text = HtmlEmailBuilder(request.EmailTo, emailCode) };
+                email.Body = new TextPart(TextFormat.Html) { Text = HtmlEmailBuilder(request.EmailTo, request.RecoveryToken) };
 
                 return email;
             }
