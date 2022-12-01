@@ -8,7 +8,12 @@
 
   <ItemGroup>
     <PackageReference Include="MailKit" Version="3.3.0" />
+    <PackageReference Include="RabbitMQ.Client" Version="6.4.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EmailSender.Application\EmailSender.Application.csproj" />
   </ItemGroup>
 
 </Project>
