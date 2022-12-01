@@ -1,4 +1,5 @@
 using EmailSender.API.IoC;
+using EmailSender.API.Queues.Subscribers;
 
 var builder = WebApplication.CreateBuilder(args);
 
